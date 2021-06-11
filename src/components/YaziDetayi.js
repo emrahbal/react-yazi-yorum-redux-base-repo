@@ -1,40 +1,42 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { api } from "../api";
+import React, { useEffect } from "react";
+
 import YaziYorumlari from "./YaziYorumlari";
-import { Link, useParams, useHistory, useLocation } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 import SilModal from "./SilModal";
+import { yaziGetir } from "../actions";
+import { useDispatch, useSelector } from "react-redux";
 
 const YaziDetayi = () => {
-  const [yaziDetayi, setYaziDetayi] = useState({});
-  const [yorumlar, setYorumlar] = useState([]);
-
+  const yaziDetayi = useSelector((state) => state.yaziDetayi);
+  const dispatch = useDispatch();
   const { id } = useParams();
   const history = useHistory();
-  const location = useLocation();
+
+  console.log({ id });
 
   const handleCommentSubmit = (event, yorum) => {
-    event.preventDefault();
-    api()
-      .post(`/posts/${id}/comments`, yorum)
-      .then((response) => {
-        setYorumlar([...yorumlar, response.data]);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // event.preventDefault();
+    // api()
+    //   .post(`/posts/${id}/comments`, yorum)
+    //   .then((response) => {
+    //     setYorumlar([...yorumlar, response.data]);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   };
 
   useEffect(() => {
-    axios
-      .all([api().get(`/posts/${id}`), api().get(`/posts/${id}/comments`)])
-      .then((responses) => {
-        setYaziDetayi(responses[0].data);
-        setYorumlar(responses[1].data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    dispatch(yaziGetir(id));
+    // axios
+    //   .all([api().get(`/posts/${id}`), api().get(`/posts/${id}/comments`)])
+    //   .then((responses) => {
+    //     setYaziDetayi(responses[0].data);
+    //     setYorumlar(responses[1].data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }, []);
 
   return (
@@ -48,7 +50,10 @@ const YaziDetayi = () => {
         <SilModal yazi={yaziDetayi} push={history.push} />
       </div>
       <p>{yaziDetayi.content}</p>
-      <YaziYorumlari yorumlar={yorumlar} handleSubmit={handleCommentSubmit} />
+      <YaziYorumlari
+        yorumlar={yaziDetayi.yorumlar}
+        handleSubmit={handleCommentSubmit}
+      />
     </React.Fragment>
   );
 };

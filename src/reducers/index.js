@@ -1,6 +1,8 @@
 const INITIAL_STATE = {
-    yaziListesi: [],
-    yaziListesiHata: ""
+  yaziListesi: [],
+  yaziListesiHata: "",
+  yaziDetayi:{id:"", title:"", content:"", created_at:"",yorumlar:[]},
+  yaziDetayiHata:"",
 };
 
 export const reducer = (state = INITIAL_STATE, action) => {
@@ -10,6 +12,11 @@ export const reducer = (state = INITIAL_STATE, action) => {
       return { ...state, yaziListesi: action.payload };
     case "YAZI_LISTESI_GETIR_HATA":
       return { ...state, yaziListesiHata: action.payload };
-      default: return state;
+    case "YAZI_GETIR":
+      return { ...state, yaziDetayi: action.payload };
+      case "YAZI_GETIR_HATA":
+        return{...state, yaziDetayiHata: action.payload}
+    default:
+      return state;
   }
 };
